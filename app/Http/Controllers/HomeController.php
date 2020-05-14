@@ -150,7 +150,7 @@ if($num_components>0)
 
 }
 
-public function bookingKey()
+public function searchBooking()
    {
     $marketplace_id = 47991;
 
@@ -182,21 +182,75 @@ $tour = 152;
 // Channel (Operator) ID of the Tour
 $channel = 9144;
 
+$params = "active=1";
+
 // Query the TourCMS API
-$url_data = new SimpleXMLElement('<url />');
+$results = $tourcms->search_bookings($params, $channel);
 
-// Response URL is the page we use to receive the customer back
-$url_data->addChild('response_url', 'https://example.com/step2.php');
+// Loop through each booking
+foreach($results->booking as $booking) {
+  // Print out the booking ID and channel name
+  print $booking->booking_id." - ".$booking->channel_name." &gt; ";
 
-// Call TourCMS API
-$result = $tourcms->get_booking_redirect_url($url_data, $channel);
-echo "<pre>";
-print_r($result);die;
-// Process the redirect URL
-$redirect_url = $result->url->redirect_url;
+  // Print out the booking name and revenue
+  print $booking->booking_name." (".$booking->sales_revenue_display.")";
+  print "<br />";
+}
 
-// Redirect the customer to TourCMS
-header("Location: " . $redirect_url);
+
+}
+
+public function showBooking()
+   {
+    $marketplace_id = 47991;
+
+  // API key will be a string, find it in the API page in TourCMS settings
+    $api_key = "9bc420963401";
+
+  // Timeout will set the maximum execution time, in seconds. If set to zero, no time limit is imposed.
+    $timeout = 0;
+$tour = 152;
+
+// Channel (Operator) ID of the Tour
+$channel = 9144;
+
+  // Channel ID represents the Tour Operator channel to call the API against
+  // Tour Operators may have multiple channels, so enter the correct one here
+  // Agents can make some calls (e.g. tour_search()) across multiple channels
+  // by entering a Channel ID of 0 or omitting it, or they can restrict to a
+  // specific channel by providing the Channel ID
+   
+// Create a new TourCMS instance
+  // Optionally alias the namespace
+  $tourcms = new TourCMS($marketplace_id, $api_key, 'simplexml', $timeout);
+
+// If this Tour used Hotel type pricing we'd append a duration
+// $qs .= "&hdur=7";
+
+// Append the number of people for each rate
+// Rate details obtained via "Show Tour" API
+// Numbers of people likely via user input
+// Here we just want 2 people on rate "r1"
+$booking = 59694021;
+$result = $tourcms->show_booking($booking, $channel);
+
+// Get the booking node
+$booking = $result->booking;
+
+// Print the booking ID
+print $booking->booking_id . "<br />";
+
+// Print the Booking name
+print $booking->booking_name . "<br />";
+
+// Format and print the booking start and end dates
+$start_date = strtotime($booking->start_date);
+$start_date_display = date("jS F Y (l)", $start_date);
+print "Start: ".$start_date_display. "<br />";
+
+$end_date = strtotime($booking->end_date);
+$end_date_display = date("jS F Y (l)", $end_date);
+print "End: " . date("jS F Y (l)", $end_date) . "<br />";
 
 
 }

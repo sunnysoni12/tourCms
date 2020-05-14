@@ -20,8 +20,11 @@ Route::get('channelList', 'HomeController@index');
 Route::get('showTour', 'HomeController@showTour');
 Route::get('checkAvailabiliy', 'HomeController@checkAvailabiliy');
 Route::get('startNewBooking', 'HomeController@startNewBooking');
-Route::get('bookingKey', 'HomeController@bookingKey');
 Route::get('commitBooking', 'HomeController@commitBooking');
+
+Route::get('searchBooking', 'HomeController@searchBooking');
+Route::get('showBooking', 'HomeController@showBooking');
+
 
 
 
